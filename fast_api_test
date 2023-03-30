@@ -1,0 +1,56 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Optional
+
+
+app = FastAPI()
+
+# Define data model
+class Address(BaseModel):
+    id: Optional[int] = None
+    address: str
+    latitude: float
+    longitude: float
+
+# Define database connection
+import sqlite3
+conn = sqlite3.connect('addresses.db')
+c = conn.cursor()
+c.execute('''CREATE TABLE IF NOT EXISTS addresses
+             (id INTEGER PRIMARY KEY AUTOINCREMENT,
+              address TEXT,
+              latitude REAL,
+              longitude REAL)''')
+c.execute('''INSERT INTO addresses (address, latitude, longitude)
+             VALUES (?, ?, ?)''', ('123 Main St', 37.7749, -122.4194))
+conn.commit()
+
+# Define CRUD endpoints
+@app.post('/addresses')
+async def create_address(address: Address):
+    # validate address
+    # insert into database
+    return {'id': 1} # return new ID
+
+@app.get('/addresses/{id}')
+async def read_address(id: int):
+    # retrieve address by ID
+    return {'id': 1, 'address': '123 Main St', 'latitude': 37.7749, 'longitude': -122.4194}
+
+@app.put('/addresses/{id}')
+async def update_address(id: int, address: Address):
+    # validate address
+    # update database
+    return {'id': 1}
+
+@app.delete('/addresses/{id}')
+async def delete_address(id: int):
+    # delete from database
+    return {'status': 'ok'}
+
+# Define validation
+@app.post('/addresses')
+async def create_address(address: Address):
+    # validate address
+    return {'id': 1}
+
